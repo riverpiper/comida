@@ -17,7 +17,7 @@ function Search() {
   const filterItems = (text) => {
     if (text.length > 0) {
       let items = menu.filter((item) => {
-        const item_data = `${item.names.toUpperCase()})`;
+        const item_data = `${item.name.toUpperCase()})`;
         const text_data = text.toUpperCase();
         return item_data.indexOf(text_data) > -1;
       });
@@ -47,7 +47,7 @@ function Search() {
                   textTransform: "capitalize",
                 }}
               >
-                {item.names}
+                {item.name}
               </Text>
               <View
                 style={{
