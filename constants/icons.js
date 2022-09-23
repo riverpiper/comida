@@ -23,31 +23,47 @@ export const basket = require("../assets/icons/shopping-basket.png");
 export const star = require("../assets/icons/star.png");
 export const sushi = require("../assets/icons/sushi.png");
 export const user = require("../assets/icons/user.png");
+export const pavbhaji = require("../assets/icons/pav-bhaji.png");
+export const thali = require("../assets/icons/thali.png");
+export const continental = require("../assets/icons/continental.png");
+export const bread = require("../assets/icons/bread.png");
+export const starters = require("../assets/icons/starters.png");
+export const maincourse = require("../assets/icons/maincourse.png");
+export const accompaiments = require("../assets/icons/accompaiments.png");
+export const combos = require("../assets/icons/combos.png");
 
 export default {
-    back,
-    car,
-    cutlery,
-    donut,
-    drink,
-    fire,
-    fries,
-    hamburger,
-    hotdog,
-    like,
-    list,
-    location,
-    master_card,
-    nearby,
-    noodle,
-    pin,
-    pizza,
-    red_pin,
-    rice_bowl,
-    salad,
-    search,
-    basket,
-    star,
-    sushi,
-    user,
-}
+  back,
+  car,
+  cutlery,
+  donut,
+  drink,
+  fire,
+  fries,
+  hamburger,
+  hotdog,
+  like,
+  list,
+  location,
+  master_card,
+  nearby,
+  noodle,
+  pin,
+  pizza,
+  red_pin,
+  rice_bowl,
+  salad,
+  search,
+  basket,
+  star,
+  sushi,
+  user,
+  pavbhaji,
+  thali,
+  continental,
+  bread,
+  starters,
+  maincourse,
+  accompaiments,
+  combos,
+};
