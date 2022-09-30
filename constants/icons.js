@@ -31,6 +31,8 @@ export const starters = require("../assets/icons/starters.png");
 export const maincourse = require("../assets/icons/maincourse.png");
 export const accompaiments = require("../assets/icons/accompaiments.png");
 export const combos = require("../assets/icons/combos.png");
+export const rupee = require("../assets/icons/rupee.png");
+export const close = require("../assets/icons/close.png");
 
 export default {
   back,
@@ -66,4 +68,6 @@ export default {
   maincourse,
   accompaiments,
   combos,
+  rupee,
+  close,
 };

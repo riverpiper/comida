@@ -7,12 +7,20 @@ import {
   TouchableOpacity,
   Text,
   TouchableWithoutFeedback,
+  Image,
 } from "react-native";
 import { icons, images, SIZES, COLORS, FONTS } from "../constants";
 import menu from "../Data/menu";
 
-function Search() {
+function Search({ navigation }) {
   const [selectedItems, setSelectedItems] = useState(menu);
+  const [currentLocation, setCurrentLocation] = React.useState({
+    streetName: "Kalyan",
+    gps: {
+      latitude: 1.5496614931250685,
+      longitude: 110.36381866919922,
+    },
+  });
 
   const filterItems = (text) => {
     if (text.length > 0) {
@@ -32,7 +40,10 @@ function Search() {
       <TouchableWithoutFeedback
         key={index}
         onPress={() => {
-          console.log("click");
+          navigation.navigate("Restaurant", {
+            item,
+            currentLocation,
+          });
         }}
       >
         <View style={styles.mainCardView}>
@@ -69,17 +80,19 @@ function Search() {
           </View>
           <View
             style={{
-              height: 25,
-              backgroundColor: COLORS.lightGray,
               borderWidth: 0,
-              width: 25,
+
               marginLeft: -26,
               alignItems: "center",
               justifyContent: "center",
-              borderRadius: 50,
             }}
           >
-            <Text style={{ color: COLORS.white }}>{item.price}</Text>
+            <Image
+              source={{
+                uri: `${item.image}`,
+              }}
+              style={{ height: 60, width: 60, borderRadius: 50 }}
+            />
           </View>
         </View>
       </TouchableWithoutFeedback>
