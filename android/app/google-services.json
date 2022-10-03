@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "572599059426",
+    "project_id": "comida-34bef",
+    "storage_bucket": "comida-34bef.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:572599059426:android:70f84dc77f9149cbdaefbb",
+        "android_client_info": {
+          "package_name": "com.fooddeliveryapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "572599059426-9qo0tirs096ldtjiuc24317fc61k8laj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.fooddeliveryapp",
+            "certificate_hash": "cc6863d07d26cc2cb4ad8e737a96fb29e9442a46"
+          }
+        },
+        {
+          "client_id": "572599059426-gqfnlopglffgna2u72052mtkb8ealqo6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPtSCZ6Zl3CuFTEotY-H-k1TERAMwg0jU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "572599059426-gqfnlopglffgna2u72052mtkb8ealqo6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

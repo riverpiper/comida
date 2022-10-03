@@ -16,7 +16,8 @@ import { isIphoneX } from "react-native-iphone-x-helper";
 import './global.js'
 
 import { icons, COLORS, SIZES, FONTS } from "../constants";
-import axios from "axios";
+import firbaseSetup from "../setup";
+import menu from "../Data/menu";
 
 ////import { actionType } from "./reducertemp";
 //import { useStateValue } from "./StateProvidertemp";
@@ -125,7 +126,7 @@ const Restaurant = ({ route, navigation }) => {
           id: id,
           qty: 1,
           price: price,
-          total: parseInt(price), 
+          total: parseInt(price),
         };
         //console.log(typeof(newDish[id]))
         //console.log(newDish)
@@ -350,10 +351,42 @@ const Restaurant = ({ route, navigation }) => {
   }
 
   function renderOrder() {
+    const { auth } = firbaseSetup;
+    const [confirm, setConfirm] = useState(null);
+
     const [modalVisible, setModalVisible] = useState(false);
     const [code, setCode] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
     const [otpSend, setOtpSend] = useState(false);
+
+    const { firestore } = firbaseSetup;
+
+    const signInWithPhoneNumber = async (phoneNumber) => {
+      const confirmation = await auth().signInWithPhoneNumber(phoneNumber);
+      // console.log(confirmation);
+      setConfirm(confirmation);
+    };
+
+    const confirmCode = async () => {
+      console.log(code);
+      try {
+        await confirm.confirm(code);
+        setModalVisible(false);
+
+        firestore()
+          .collection("Users")
+          .add({
+            Phone: phoneNumber,
+          })
+          .then(() => {
+            console.log("User added!");
+            alert("User SignIn Successfully");
+            navigation.navigate("MyOrders");
+          });
+      } catch (e) {
+        alert(JSON.stringify(e));
+      }
+    };
     return (
       <View>
         <View style={styles.centeredView}>
@@ -362,7 +395,7 @@ const Restaurant = ({ route, navigation }) => {
             transparent={true}
             visible={modalVisible}
             onRequestClose={() => {
-              Alert.alert("Modal has been closed.");
+              alert("Modal has been closed.");
               setModalVisible(!modalVisible);
             }}
           >
@@ -385,7 +418,7 @@ const Restaurant = ({ route, navigation }) => {
                     }}
                   />
                 </TouchableOpacity>
-                {otpSend ? (
+                {confirm ? (
                   <View>
                     <Text style={styles.modalText}>Please enter OTP!</Text>
                     <View
@@ -402,6 +435,20 @@ const Restaurant = ({ route, navigation }) => {
                         value={code}
                       />
                     </View>
+                    <Pressable
+                      style={[styles.button, styles.buttonClose]}
+                      onPress={() => confirmCode()}
+                    >
+                      <Text
+                        style={{
+                          color: COLORS.white,
+                          ...FONTS.body3,
+                          alignSelf: "center",
+                        }}
+                      >
+                        Cofirm OTP Code
+                      </Text>
+                    </Pressable>
                   </View>
                 ) : (
                   <View>
@@ -423,82 +470,31 @@ const Restaurant = ({ route, navigation }) => {
                         value={phoneNumber}
                       />
                     </View>
+                    <Pressable
+                      style={[styles.button, styles.buttonClose]}
+                      onPress={async () => {
+                        const regex = /^[6-9]\d{9}$/gi;
+                        if (regex.test(phoneNumber)) {
+                          const code = "+91";
+                          // console.log(code + phoneNumber);
+                          signInWithPhoneNumber(code + phoneNumber);
+                        } else {
+                          alert("please enter valid number");
+                        }
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: COLORS.white,
+                          ...FONTS.body3,
+                          alignSelf: "center",
+                        }}
+                      >
+                        Send Otp
+                      </Text>
+                    </Pressable>
                   </View>
                 )}
-
-                <Pressable
-                  style={[styles.button, styles.buttonClose]}
-                  onPress={async () => {
-                    if (!otpSend) {
-                      const regex = /^[6-9]\d{9}$/gi;
-                      if (regex.test(phoneNumber)) {
-                        console.log("91" + phoneNumber);
-
-                        try {
-                          const data = JSON.stringify({
-                            to: "91" + phoneNumber,
-                            channel: "sms",
-                          });
-
-                          const response = await fetch(
-                            `https://verify.twilio.com/v2/Services/VA59c7a2ae9c03bb038856a6e2dbe5442e/Verifications`,
-                            {
-                              method: "POST",
-                              headers: {
-                                "Content-Type": "application/json",
-                              },
-                              body: data,
-                            }
-                          );
-
-                          const json = await response.json();
-                          console.log(json);
-                          setOtpSend(true);
-                          return json.success;
-                        } catch (error) {
-                          console.error(error);
-                          alert(error);
-                        }
-                      } else {
-                        alert("please enter valid number");
-                      }
-                    } else {
-                      try {
-                        const data = JSON.stringify({
-                          to: "91" + phoneNumber,
-                          code,
-                        });
-
-                        const response = await fetch(
-                          `https://verify.twilio.com/v2/Services/VA59c7a2ae9c03bb038856a6e2dbe5442e/VerificationCheck`,
-                          {
-                            method: "POST",
-                            headers: {
-                              "Content-Type": "application/json",
-                            },
-                            body: data,
-                          }
-                        );
-
-                        const json = await response.json();
-                        setModalVisible(false);
-
-                        setOtpSend(false);
-                        navigation.navigate("MyOrders");
-                        return json.success;
-                      } catch (error) {
-                        console.error(error);
-                        setOtpSend(false);
-
-                        alert("Invalid otp");
-                      }
-                    }
-                  }}
-                >
-                  <Text style={{ color: COLORS.white, ...FONTS.body3 }}>
-                    {otpSend ? "Submit" : "Send Otp"}
-                  </Text>
-                </Pressable>
               </View>
             </View>
           </Modal>
@@ -523,7 +519,7 @@ const Restaurant = ({ route, navigation }) => {
             <Text style={{ ...FONTS.h3 }}>
               {getBasketItemCount()} items in Cart
             </Text>
-            <Text style={{ ...FONTS.h3 }}>Rs. {sumOrder()}</Text>
+            <Text style={{ ...FONTS.h3 }}>Rs {sumOrder()}</Text>
           </View>
 
           <View
