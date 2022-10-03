@@ -13,8 +13,23 @@ import {
 import { TextInput } from "react-native-gesture-handler";
 import { isIphoneX } from "react-native-iphone-x-helper";
 
+import './global.js'
+
 import { icons, COLORS, SIZES, FONTS } from "../constants";
 import axios from "axios";
+
+////import { actionType } from "./reducertemp";
+//import { useStateValue } from "./StateProvidertemp";
+import { parse } from "react-native-svg";
+
+//import store from './store';
+//import {editCart} from './reducer';
+
+//import {Provider, useSelector, useDispatch} from 'react-redux';
+
+let cartItems = [];
+
+
 
 const Restaurant = ({ route, navigation }) => {
   const scrollX = new Animated.Value(0);
@@ -22,24 +37,101 @@ const Restaurant = ({ route, navigation }) => {
   const [currentLocation, setCurrentLocation] = React.useState(
     route.params.currentLocation
   );
+  
   const [orderItems, setOrderItems] = React.useState([]);
+  
+  //const dispatch = useDispatch();
+  
+  //const cart = useSelector();
+  //const [{ cart, total }, dispatch] = useStateValue();
 
-  function editOrder(action, id, price) {
+  //useEffect(() => {
+  //  cartItems = cart;
+  //});
+
+  orderItem = [{
+    id: 1,
+    name: "Paneer Tikka Masala",
+    price: 270,
+    image:
+      "https://www.cookwithmanali.com/wp-content/uploads/2014/04/Paneer-Tikka-Masala.jpg",
+    categories: ["Recommended", "Main Course"],
+  }]
+  
+ //global.ordersMap= new Map();
+ //let orders = [],  temp = {};
+   function editOrder(action, id, price, name) {
+     //console.log(orderItems)
     let orderList = orderItems.slice();
-    let dish = orderList.filter((a) => a.id == id);
+    //console.log(orderList)
+    let index = orderList.findIndex((a) => a.id == id);
+    //let dish = orderList.filter((a) => a.id == id);
 
-    if (action == "+") {
+    /*if(action == "+")
+    {
+      if(index == -1)
+      {
+        let temp = {
+          id : id,
+          price : price,
+          qty : 1,
+          name : name
+        };
+        cartItems.push(temp);
+      }
+      else{
+        orderList[index].qty=orderList[index].qty + 1;
+        cartItems[index].qty = cartItems[index].qty + 1;
+      }
+      dispatch({
+        editCart,
+        cart: cartItems,
+      });
+    }
+    else{
+      if (orderList[index].qty == 1 && index != -1)
+      {
+        orderList.splice(index,index);
+        cartItems.splice(index,index);
+        dispatch({
+          editCart,
+          cart: cartItems,
+        });
+      }
+    }*/
+    if(action == "+")
+    {
       if (dish.length > 0) {
+        //console.log(dish)
         let newQty = dish[0].qty + 1;
         dish[0].qty = newQty;
         dish[0].total = dish[0].qty * price;
-      } else {
+        //console.log(id)
+        if(global.ordersMap.has((id)))
+        {
+          //console.log(true) ;
+          global.ordersMap[id] = dish;
+          console.log(global.ordersMap);
+          //dish;
+        }
+        else 
+          console.log(false)
+        global.ordersMap[id] = dish;
+        //console.log(ordersMap);
+        cartItems
+      }
+       else {
         const newDish = {
           id: id,
           qty: 1,
           price: price,
-          total: price,
+          total: parseInt(price), 
         };
+        //console.log(typeof(newDish[id]))
+        //console.log(newDish)
+        global.ordersMap.set(id,newDish);
+        global.console.log(ordersMap);
+        //orders.push(newDish)
         orderList.push(newDish);
       }
 
@@ -49,15 +141,30 @@ const Restaurant = ({ route, navigation }) => {
         if (dish[0].qty > 0) {
           let newQty = dish[0].qty - 1;
           dish[0].qty = newQty;
-          dish[0].total = newQty * price;
+          dish[0].total = parseInt(newQty * price);
+          //orders[id][qty] = newQty;
+          //orders[id][total] = dish[0].total;
+          if(global.ordersMap.has(id))
+          {
+            if(newQty == 0)
+            {
+              global.ordersMap.delete(id)
+            }
+            else
+            {
+              global.ordersMap[id] = dish;
+            }
+          }
         }
       }
 
       setOrderItems(orderList);
     }
+    //console.log(orders)
+    console.log(cartItems);
   }
 
-  function getOrderQty(id) {
+   function getOrderQty(id) {
     let orderItem = orderItems.filter((a) => a.id == id);
 
     if (orderItem.length > 0) {
@@ -188,7 +295,7 @@ const Restaurant = ({ route, navigation }) => {
                     borderTopLeftRadius: 25,
                     borderBottomLeftRadius: 25,
                   }}
-                  onPress={() => editOrder("-", item.id, item.price)}
+                  onPress={() => editOrder("-", item.id, item.price, item.name)}
                 >
                   <Text style={{ ...FONTS.body1 }}>-</Text>
                 </TouchableOpacity>
@@ -213,7 +320,7 @@ const Restaurant = ({ route, navigation }) => {
                     borderTopRightRadius: 25,
                     borderBottomRightRadius: 25,
                   }}
-                  onPress={() => editOrder("+", item.id, item.price.toFixed(2))}
+                  onPress={() => editOrder("+", item.id, item.price.toFixed(2), item.name)}
                 >
                   <Text style={{ ...FONTS.body1 }}>+</Text>
                 </TouchableOpacity>
@@ -416,7 +523,7 @@ const Restaurant = ({ route, navigation }) => {
             <Text style={{ ...FONTS.h3 }}>
               {getBasketItemCount()} items in Cart
             </Text>
-            <Text style={{ ...FONTS.h3 }}>${sumOrder()}</Text>
+            <Text style={{ ...FONTS.h3 }}>Rs. {sumOrder()}</Text>
           </View>
 
           <View

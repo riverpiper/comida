@@ -619,6 +619,8 @@ const Home = ({ navigation }) => {
         }}
       />
     );
+    console.log(item)
+    console.log(index)
   }
 
   return (
